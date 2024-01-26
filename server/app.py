@@ -97,6 +97,21 @@ class Representatives(Resource):
             200,
         )
 
+    def post(self):
+        name = request.get_json()
+        representative = Representative()
+        try:
+            representative.name = name
+            representative.rep_type = rep_type
+            representative.state = state
+            representative.county = county
+            representative.affiliation = affiliation
+            db.session.add(representative)
+            db.session.commit()
+            return make_response(representative.to_dict(), 201)
+        except ValueError:
+            return make_response({"error": "Invalid representative"}, 400)
+
 
 class RepresentativesByState(Resource):
     def get(self, state):
@@ -116,6 +131,22 @@ class Bills(Resource):
             [bill.to_dict() for bill in Bill.query.all()],
             200,
         )
+
+    def post(self):
+        name = request.get_json()
+        bill = Bill()
+        try:
+            bill.name = name
+            bill.code = code
+            bill.text = text
+            bill.bill_type = bill_type
+            bill.state = state
+            bill.county_id = county_id
+            db.session.add(bill)
+            db.session.commit()
+            return make_response(bill.to_dict(), 201)
+        except ValueError:
+            return make_response({"error": "Invalid bill"}, 400)
 
 
 class BillsByCode(Resource):

@@ -269,7 +269,7 @@ class Bill(db.Model, SerializerMixin):
     text = db.Column(db.String)
     bill_type = db.Column(db.String)
     state = db.Column(db.String)
-    county_id = db.Column(db.Integer)
+    county = db.Column(db.String)
 
     # add relationships
     propositions = db.relationship("Proposition", back_populates="bill")
