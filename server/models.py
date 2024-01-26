@@ -168,10 +168,11 @@ class Poll(db.Model, SerializerMixin):
 
     # add relationships
     election = db.relationship("Election", back_populates="polls")
+    campaigns = db.relationship("Campaign", back_populates="poll")
     candidates = association_proxy("campaigns", "candidate")
 
     # add serialization rules
-    serialize_rules = ("-election.polls", "-candidates.poll")
+    serialize_rules = ("-election.polls", "-candidates.poll", "-campaigns.poll")
 
     # add validation
 
@@ -190,11 +191,11 @@ class Candidate(db.Model, SerializerMixin):
     affiliation = db.Column(db.String)
 
     # add relationships
+    campaigns = db.relationship("Campaign", back_populates="candidate")
     polls = association_proxy("campaigns", "poll")
-    elections = association_proxy("campaigns", "election")
 
     # add serialization rules
-    serialize_rules = ("-polls.candidates", "-elections.candidates")
+    serialize_rules = ("-polls.candidates", "-campaigns.candidate")
 
     # add validation
 
