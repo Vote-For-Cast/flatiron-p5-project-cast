@@ -17,6 +17,7 @@ class Voter(db.Model, SerializerMixin):
     account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"))
     name = db.Column(db.String)
     username = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     phone = db.Column(db.String, unique=True)
     street_line1 = db.Column(db.String)
@@ -140,8 +141,8 @@ class Election(db.Model, SerializerMixin):
     county = db.Column(db.String)
 
     # add relationships
-    polls = db.relationship("Polls", back_populates="election")
-    propositions = db.relationship("Propositions", back_populates="election")
+    polls = db.relationship("Poll", back_populates="election")
+    propositions = db.relationship("Proposition", back_populates="election")
     candidates = association_proxy("polls", "candidates")
     bills = association_proxy("propositions", "bills")
 
@@ -209,15 +210,22 @@ class Campaign(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     poll_id = db.Column(db.Integer, db.ForeignKey("polls.id"))
     candidate_id = db.Column(db.Integer, db.ForeignKey("candidates.id"))
+    representative_id = db.Column(db.Integer, db.ForeignKey("representatives.id"))
     votes = db.Column(db.Integer)
 
     # add relationships
-    poll = db.relationship("Poll", back_populates="candidates")
-    candidate = db.relationship("Candidate", back_populates="polls")
+    poll = db.relationship("Poll", back_populates="campaigns")
+    candidate = db.relationship("Candidate", back_populates="campaigns")
+    representative = db.relationship("Representative", back_populates="campaigns")
     election = association_proxy("poll", "election")
 
     # add serialization rules
-    serialize_rules = ("-poll.candidates", "-candidate.polls")
+    serialize_rules = (
+        "-poll.campaigns",
+        "-candidate.campaigns",
+        "-representative.campaigns",
+        "-election.campaigns",
+    )
 
     # add validation
 
@@ -289,9 +297,10 @@ class Representative(db.Model, SerializerMixin):
     affiliation = db.Column(db.String)
 
     # add relationships
+    campaigns = db.relationship("Campaign", back_populates="representative")
 
     # add serialization rules
-
+    serialize_rules = ("-campaigns.representative",)
     # add validation
 
     def __repr__(self):
