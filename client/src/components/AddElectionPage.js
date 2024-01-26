@@ -44,15 +44,39 @@ const AddElectionPage = () => {
         name="name"
         onChange={handleChange}
         placeholder="Election Name"
+        style={{ display: "block", margin: "10px 0", width: "300px" }}
       />
       <input
         type="date"
         name="date"
         onChange={handleChange}
         placeholder="Date"
+        style={{ display: "block", margin: "10px 0" }}
       />
-      {/* Add more inputs for election_type, state, county */}
-      <button type="submit">Add Election</button>
+      <input
+        type="text"
+        name="election_type"
+        onChange={handleChange}
+        placeholder="Election Type"
+        style={{ display: "block", margin: "10px 0" }}
+      />
+      <input
+        type="text"
+        name="state"
+        onChange={handleChange}
+        placeholder="State"
+        style={{ display: "block", margin: "10px 0" }}
+      />
+      <input
+        type="text"
+        name="county"
+        onChange={handleChange}
+        placeholder="County"
+        style={{ display: "block", margin: "10px 0" }}
+      />
+      <button type="submit" style={{ display: "block", margin: "10px 0" }}>
+        Add Election
+      </button>
     </form>
   );
 };
