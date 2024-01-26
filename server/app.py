@@ -130,12 +130,56 @@ class BillsByCode(Resource):
             return make_response({"error": "Bills not found"}, 404)
 
 
+class Polls(Resource):
+    def get(self):
+        return make_response(
+            [poll.to_dict() for poll in Poll.query.all()],
+            200,
+        )
+
+
+class PollsByElection(Resource):
+    def get(self, election_id):
+        polls = Poll.query.filter_by(election_id=election_id).all()
+        if polls:
+            return make_response(
+                [poll.to_dict() for poll in polls],
+                200,
+            )
+        else:
+            return make_response({"error": "Polls not found"}, 404)
+
+
+class Propositions(Resource):
+    def get(self):
+        return make_response(
+            [proposition.to_dict() for proposition in Proposition.query.all()],
+            200,
+        )
+
+
+class PropositionsByElection(Resource):
+    def get(self, election_id):
+        propositions = Proposition.query.filter_by(election_id=election_id).all()
+        if propositions:
+            return make_response(
+                [proposition.to_dict() for proposition in propositions],
+                200,
+            )
+        else:
+            return make_response({"error": "Propositions not found"}, 404)
+
+
 api.add_resource(Elections, "/elections")
 api.add_resource(ElectionById, "/elections/<int:id>")
 api.add_resource(Representatives, "/representatives")
 api.add_resource(RepresentativesByState, "/representatives/<string:state>")
 api.add_resource(Bills, "/bills")
 api.add_resource(BillsByCode, "/bills/<string:code>")
+api.add_resource(Polls, "/polls")
+api.add_resource(PollsByElection, "/polls/<int:election_id>")
+api.add_resource(Propositions, "/propositions")
+api.add_resource(PropositionsByElection, "/propositions/<int:election_id>")
 
 
 if __name__ == "__main__":
