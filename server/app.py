@@ -5,6 +5,7 @@
 # Remote library imports
 from flask import request, make_response
 from flask_restful import Resource
+from datetime import datetime
 
 # Local imports
 from config import app, db, api, migrate
@@ -41,14 +42,17 @@ class Elections(Resource):
         )
 
     def post(self):
-        date = request.get_json()
+        data = request.get_json()
         election = Election()
         try:
-            election.name = name
-            election.date = date
-            election.election_type = election_type
-            election.state = state
-            election.county = county
+            date_str = data["date"]
+            date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+
+            election.name = data["name"]
+            election.date = date_obj
+            election.election_type = data["election_type"]
+            election.state = data["state"]
+            election.county = data["county"]
             db.session.add(election)
             db.session.commit()
             return make_response(election.to_dict(), 201)
@@ -98,14 +102,14 @@ class Representatives(Resource):
         )
 
     def post(self):
-        name = request.get_json()
+        data = request.get_json()
         representative = Representative()
         try:
-            representative.name = name
-            representative.rep_type = rep_type
-            representative.state = state
-            representative.county = county
-            representative.affiliation = affiliation
+            representative.name = data["name"]
+            representative.rep_type = data["rep_type"]
+            representative.state = data["state"]
+            representative.county = data["county"]
+            representative.affiliation = data["affiliation"]
             db.session.add(representative)
             db.session.commit()
             return make_response(representative.to_dict(), 201)
@@ -133,15 +137,15 @@ class Bills(Resource):
         )
 
     def post(self):
-        name = request.get_json()
+        data = request.get_json()
         bill = Bill()
         try:
-            bill.name = name
-            bill.code = code
-            bill.text = text
-            bill.bill_type = bill_type
-            bill.state = state
-            bill.county_id = county_id
+            bill.name = data["name"]
+            bill.code = data["code"]
+            bill.text = data["text"]
+            bill.bill_type = data["bill_type"]
+            bill.state = data["state"]
+            bill.county = data["county"]
             db.session.add(bill)
             db.session.commit()
             return make_response(bill.to_dict(), 201)

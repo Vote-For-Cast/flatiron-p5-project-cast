@@ -1,8 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+// App.js
+
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import NavBar from "./NavBar";
+import HomePage from "./HomePage";
+import ViewElectionsPage from "./ViewElectionsPage";
+import AddElectionPage from "./AddElectionPage";
 
 function App() {
-  return <h1>Project Client</h1>;
+  return (
+    <Router>
+      <NavBar />
+      <Switch>
+        <Route path="/" exact component={HomePage} />
+        <Route path="/elections/view" component={ViewElectionsPage} />
+        <Route path="/elections/add" component={AddElectionPage} />
+      </Switch>
+    </Router>
+  );
 }
 
 export default App;
