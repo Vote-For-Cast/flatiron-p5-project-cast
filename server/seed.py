@@ -8,11 +8,13 @@ from models import (
     Voter,
     Admin,
     Account,
-    Legislation,
+    Bill,
     Candidate,
     Representative,
     Election,
-    Ballot,
+    Poll,
+    Proposition,
+    Campaign,
 )
 
 # List of 50 US states and 3 real counties for each
@@ -74,16 +76,18 @@ if __name__ == "__main__":
         print("Starting seed...")
 
         # Clear existing data from all tables
+        State.query.delete()
+        County.query.delete()
         Voter.query.delete()
         Admin.query.delete()
         Account.query.delete()
-        Legislation.query.delete()
+        Bill.query.delete()
         Candidate.query.delete()
         Representative.query.delete()
         Election.query.delete()
-        Ballot.query.delete()
-        County.query.delete()
-        State.query.delete()
+        Poll.query.delete()
+        Proposition.query.delete()
+        Campaign.query.delete()
 
         # Seed states and counties
         for state_name, counties in us_states_with_counties.items():

@@ -16,11 +16,13 @@ from models import (
     Voter,
     Admin,
     Account,
-    Legislation,
+    Bill,
     Candidate,
     Representative,
     Election,
-    Ballot,
+    Poll,
+    Proposition,
+    Campaign,
 )
 
 # Views go here!

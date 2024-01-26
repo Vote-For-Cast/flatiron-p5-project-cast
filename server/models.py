@@ -7,13 +7,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 
 
-# Platform Users
+# Platform Users and Enterprise Accounts
 
 
 class Voter(db.Model, SerializerMixin):
     __tablename__ = "voters"
 
     id = db.Column(db.Integer, primary_key=True)
+    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"))
     name = db.Column(db.String)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
@@ -21,15 +22,17 @@ class Voter(db.Model, SerializerMixin):
     street_line1 = db.Column(db.String)
     street_line2 = db.Column(db.String)
     city = db.Column(db.String)
-    state = db.Column(db.String, db.ForeignKey("states.name"))
+    state = db.Column(db.String)
     postal_code = db.Column(db.String)
     county = db.Column(db.String)
     country = db.Column(db.String)
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"))
 
     # add relationships
+    account = db.relationship("Account", back_populates="voters")
+    admin = association_proxy("account", "admin")
 
     # add serialization rules
+    serialize_rules = ("-account.voters", "-admin.voters")
 
     # add validation
 
@@ -45,13 +48,15 @@ class Admin(db.Model, SerializerMixin):
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     phone = db.Column(db.String, unique=True)
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"))
     state = db.Column(db.String, db.ForeignKey("states.name"))
     county = db.Column(db.String)
 
     # add relationships
+    account = db.relationship("Account", back_populates="admin")
+    voters = association_proxy("account", "voters")
 
     # add serialization rules
+    serialize_rules = ("-voters.admin", "-account.admin")
 
     # add validation
 
@@ -59,20 +64,21 @@ class Admin(db.Model, SerializerMixin):
         return f"<Admin {self.username}>"
 
 
-# Platform Accounts
-
-
 class Account(db.Model, SerializerMixin):
     __tablename__ = "accounts"
 
     id = db.Column(db.Integer, primary_key=True)
     admin_id = db.Column(db.Integer, db.ForeignKey("admin.id"))
-    state = db.Column(db.String, db.ForeignKey("states.name"))
+    name = db.Column(db.String, unique=True, nullable=False)
+    state = db.Column(db.String)
     county = db.Column(db.String)
 
     # add relationships
+    admin = db.relationship("Admin", back_populates="account")
+    voters = db.relationship("Voter", back_populates="account")
 
     # add serialization rules
+    serialize_rules = ("-voters.account", "-admin.account")
 
     # add validation
 
@@ -93,6 +99,7 @@ class State(db.Model, SerializerMixin):
     counties = db.relationship("County", back_populates="state")
 
     # add serialization rules
+    serialize_rules = ("-counties.state",)
 
     # add validation
 
@@ -104,13 +111,14 @@ class County(db.Model, SerializerMixin):
     __tablename__ = "counties"
 
     id = db.Column(db.Integer, primary_key=True)
-    state_id = db.Column(db.Integer, db.ForeignKey("states.id"), nullable=False)
     name = db.Column(db.String, nullable=False)
+    state_id = db.Column(db.Integer, db.ForeignKey("states.id"), nullable=False)
 
     # add relationships
     state = db.relationship("State", back_populates="counties")
 
     # add serialization rules
+    serialize_rules = ("-state.counties",)
 
     # add validation
 
@@ -126,15 +134,24 @@ class Election(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    ballot_id = db.Column(db.Integer, db.ForeignKey("ballots.id"))
     date = db.Column(db.Date, nullable=False)
-    type = db.Column(db.String, nullable=False)
-    state = db.Column(db.String, db.ForeignKey("states.name"))
-    county_id = db.Column(db.Integer, db.ForeignKey("counties.id"))
+    election_type = db.Column(db.String, nullable=False)
+    state = db.Column(db.String)
+    county = db.Column(db.String)
 
     # add relationships
+    polls = db.relationship("Polls", back_populates="election")
+    propositions = db.relationship("Propositions", back_populates="election")
+    candidates = association_proxy("polls", "candidates")
+    bills = association_proxy("propositions", "bills")
 
     # add serialization rules
+    serialize_rules = (
+        "-polls.election",
+        "-propositions.election",
+        "-candidates.election",
+        "-bills.election",
+    )
 
     # add validation
 
@@ -142,20 +159,24 @@ class Election(db.Model, SerializerMixin):
         return f"<Election {self.name}>"
 
 
-class Ballot(db.Model, SerializerMixin):
-    __tablename__ = "ballots"
+class Poll(db.Model, SerializerMixin):
+    __tablename__ = "polls"
 
     id = db.Column(db.Integer, primary_key=True)
     election_id = db.Column(db.Integer, db.ForeignKey("elections.id"))
+    position = db.Column(db.String)
 
     # add relationships
+    election = db.relationship("Election", back_populates="polls")
+    candidates = association_proxy("campaigns", "candidate")
 
     # add serialization rules
+    serialize_rules = ("-election.polls", "-candidates.poll")
 
     # add validation
 
     def __repr__(self):
-        return f"<Ballot {self.id}>"
+        return f"<Poll {self.name}>"
 
 
 class Candidate(db.Model, SerializerMixin):
@@ -163,15 +184,17 @@ class Candidate(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    ballot_id = db.Column(db.Integer, db.ForeignKey("ballots.id"))
-    type = db.Column(db.String)
-    state = db.Column(db.String, db.ForeignKey("states.name"))
-    county_id = db.Column(db.Integer, db.ForeignKey("counties.id"))
+    candidate_type = db.Column(db.String)
+    state = db.Column(db.String)
+    county = db.Column(db.Integer)
     affiliation = db.Column(db.String)
 
     # add relationships
+    polls = association_proxy("campaigns", "poll")
+    elections = association_proxy("campaigns", "election")
 
     # add serialization rules
+    serialize_rules = ("-polls.candidates", "-elections.candidates")
 
     # add validation
 
@@ -179,19 +202,71 @@ class Candidate(db.Model, SerializerMixin):
         return f"<Candidate {self.name}>"
 
 
-class Legislation(db.Model, SerializerMixin):
-    __tablename__ = "legislation"
+class Campaign(db.Model, SerializerMixin):
+    __tablename__ = "campaigns"
+
+    id = db.Column(db.Integer, primary_key=True)
+    poll_id = db.Column(db.Integer, db.ForeignKey("polls.id"))
+    candidate_id = db.Column(db.Integer, db.ForeignKey("candidates.id"))
+    votes = db.Column(db.Integer)
+
+    # add relationships
+    poll = db.relationship("Poll", back_populates="candidates")
+    candidate = db.relationship("Candidate", back_populates="polls")
+    election = association_proxy("poll", "election")
+
+    # add serialization rules
+    serialize_rules = ("-poll.candidates", "-candidate.polls")
+
+    # add validation
+
+    def __repr__(self):
+        return f"<Campaign {self.id}>"
+
+
+class Proposition(db.Model, SerializerMixin):
+    __tablename__ = "propositions"
+
+    id = db.Column(db.Integer, primary_key=True)
+    election_id = db.Column(db.Integer, db.ForeignKey("elections.id"))
+    bill_id = db.Column(db.Integer, db.ForeignKey("bills.id"))
+    yes_votes = db.Column(db.Integer)
+    no_votes = db.Column(db.Integer)
+
+    # add relationships
+    election = db.relationship("Election", back_populates="propositions")
+    bill = db.relationship("Bill", back_populates="propositions")
+    polls = association_proxy("election", "polls")
+
+    # add serialization rules
+    serialize_rules = (
+        "-election.propositions",
+        "-bill.propositions",
+        "-polls.propositions",
+    )
+
+    # add validation
+
+    def __repr__(self):
+        return f"<Propositions {self.name}>"
+
+
+class Bill(db.Model, SerializerMixin):
+    __tablename__ = "bills"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    ballot_id = db.Column(db.Integer, db.ForeignKey("ballots.id"))
-    type = db.Column(db.String)
-    state = db.Column(db.String, db.ForeignKey("states.name"))
-    county_id = db.Column(db.Integer, db.ForeignKey("counties.id"))
+    text = db.Column(db.String)
+    bill_type = db.Column(db.String)
+    state = db.Column(db.String)
+    county_id = db.Column(db.Integer)
 
     # add relationships
+    propositions = db.relationship("Proposition", back_populates="bill")
+    elections = association_proxy("propositions", "election")
 
     # add serialization rules
+    serialize_rules = ("-proposition.bill", "-election.bill")
 
     # add validation
 
@@ -207,9 +282,9 @@ class Representative(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    type = db.Column(db.String, nullable=False)
-    state = db.Column(db.String, db.ForeignKey("states.name"))
-    county_id = db.Column(db.Integer, db.ForeignKey("counties.id"))
+    rep_type = db.Column(db.String, nullable=False)
+    state = db.Column(db.String)
+    county = db.Column(db.String)
     affiliation = db.Column(db.String)
 
     # add relationships
