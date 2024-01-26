@@ -7,27 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 
 
-class State(db.Model, SerializerMixin):
-    __tablename__ = "states"
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
-
-    counties = db.relationship("County", backref="state")
-
-    def __repr__(self):
-        return f"<State {self.name}>"
-
-
-class County(db.Model, SerializerMixin):
-    __tablename__ = "counties"
-
-    id = db.Column(db.Integer, primary_key=True)
-    state_id = db.Column(db.Integer, db.ForeignKey("states.id"), nullable=False)
-    name = db.Column(db.String, nullable=False)
-
-    def __repr__(self):
-        return f"<County {self.name}>"
+# Platform Users
 
 
 class Voter(db.Model, SerializerMixin):
@@ -47,6 +27,12 @@ class Voter(db.Model, SerializerMixin):
     country = db.Column(db.String)
     account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"))
 
+    # add relationships
+
+    # add serialization rules
+
+    # add validation
+
     def __repr__(self):
         return f"<Voter {self.username}>"
 
@@ -63,8 +49,17 @@ class Admin(db.Model, SerializerMixin):
     state = db.Column(db.String, db.ForeignKey("states.name"))
     county = db.Column(db.String)
 
+    # add relationships
+
+    # add serialization rules
+
+    # add validation
+
     def __repr__(self):
         return f"<Admin {self.username}>"
+
+
+# Platform Accounts
 
 
 class Account(db.Model, SerializerMixin):
@@ -75,8 +70,55 @@ class Account(db.Model, SerializerMixin):
     state = db.Column(db.String, db.ForeignKey("states.name"))
     county = db.Column(db.String)
 
+    # add relationships
+
+    # add serialization rules
+
+    # add validation
+
     def __repr__(self):
         return f"<Account {self.id}>"
+
+
+# Platform Jurisdictions
+
+
+class State(db.Model, SerializerMixin):
+    __tablename__ = "states"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+
+    # add relationships
+    counties = db.relationship("County", back_populates="state")
+
+    # add serialization rules
+
+    # add validation
+
+    def __repr__(self):
+        return f"<State {self.name}>"
+
+
+class County(db.Model, SerializerMixin):
+    __tablename__ = "counties"
+
+    id = db.Column(db.Integer, primary_key=True)
+    state_id = db.Column(db.Integer, db.ForeignKey("states.id"), nullable=False)
+    name = db.Column(db.String, nullable=False)
+
+    # add relationships
+    state = db.relationship("State", back_populates="counties")
+
+    # add serialization rules
+
+    # add validation
+
+    def __repr__(self):
+        return f"<County {self.name}>"
+
+
+# Election Processes
 
 
 class Election(db.Model, SerializerMixin):
@@ -90,22 +132,14 @@ class Election(db.Model, SerializerMixin):
     state = db.Column(db.String, db.ForeignKey("states.name"))
     county_id = db.Column(db.Integer, db.ForeignKey("counties.id"))
 
+    # add relationships
+
+    # add serialization rules
+
+    # add validation
+
     def __repr__(self):
         return f"<Election {self.name}>"
-
-
-class Representative(db.Model, SerializerMixin):
-    __tablename__ = "representatives"
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    type = db.Column(db.String, nullable=False)
-    state = db.Column(db.String, db.ForeignKey("states.name"))
-    county_id = db.Column(db.Integer, db.ForeignKey("counties.id"))
-    affiliation = db.Column(db.String)
-
-    def __repr__(self):
-        return f"<Representative {self.name}>"
 
 
 class Ballot(db.Model, SerializerMixin):
@@ -113,6 +147,12 @@ class Ballot(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     election_id = db.Column(db.Integer, db.ForeignKey("elections.id"))
+
+    # add relationships
+
+    # add serialization rules
+
+    # add validation
 
     def __repr__(self):
         return f"<Ballot {self.id}>"
@@ -129,6 +169,12 @@ class Candidate(db.Model, SerializerMixin):
     county_id = db.Column(db.Integer, db.ForeignKey("counties.id"))
     affiliation = db.Column(db.String)
 
+    # add relationships
+
+    # add serialization rules
+
+    # add validation
+
     def __repr__(self):
         return f"<Candidate {self.name}>"
 
@@ -143,5 +189,34 @@ class Legislation(db.Model, SerializerMixin):
     state = db.Column(db.String, db.ForeignKey("states.name"))
     county_id = db.Column(db.Integer, db.ForeignKey("counties.id"))
 
+    # add relationships
+
+    # add serialization rules
+
+    # add validation
+
     def __repr__(self):
         return f"<Legislation {self.name}>"
+
+
+# Elected Officials
+
+
+class Representative(db.Model, SerializerMixin):
+    __tablename__ = "representatives"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    type = db.Column(db.String, nullable=False)
+    state = db.Column(db.String, db.ForeignKey("states.name"))
+    county_id = db.Column(db.Integer, db.ForeignKey("counties.id"))
+    affiliation = db.Column(db.String)
+
+    # add relationships
+
+    # add serialization rules
+
+    # add validation
+
+    def __repr__(self):
+        return f"<Representative {self.name}>"

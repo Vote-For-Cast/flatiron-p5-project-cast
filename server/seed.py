@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 # Local imports
-from app import app
+from config import db, app
 from models import (
-    db,
     State,
     County,
     Voter,
@@ -72,11 +71,6 @@ us_states_with_counties = {
 
 if __name__ == "__main__":
     with app.app_context():
-        print("Initializing database...")
-
-        # Create all tables based on the models
-        db.create_all()
-
         print("Starting seed...")
 
         # Clear existing data from all tables
