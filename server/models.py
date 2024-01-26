@@ -265,6 +265,7 @@ class Bill(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+    code = db.Column(db.String)
     text = db.Column(db.String)
     bill_type = db.Column(db.String)
     state = db.Column(db.String)
