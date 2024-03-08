@@ -1,7 +1,312 @@
+/* Base Styles */
+
 :root {
-  --bg: #282c34;
-  --header: #fff;
-  --link: #61dafb;
-  --text: hsla(0, 0%, 100%, 0.88);
+  --primary-color: #004aad;
+  --secondary-color: #6c757d;
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --gray-300: #d0d5dd;
 }
 
+/* Element Styles */
+
+body {
+  font-family: Arial, sans-serif;
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+h4 {
+  color: var(--secondary-color);
+}
+
+button {
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Grid System */
+
+.grid-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  text-align: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.grid-four-column {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  justify-items: center;
+  text-align: center;
+  align-items: center;
+}
+
+.grid-single-column {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  text-align: center;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Navigation */
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  height: 80px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--background-color);
+}
+
+nav img,
+header img {
+  width: auto;
+  height: auto;
+}
+
+/* Section & Main */
+
+main {
+  padding: 20px;
+  background-color: black;
+}
+
+section {
+  padding: 30px;
+}
+
+/* Footer */
+
+footer {
+  background-color: black;
+  color: var(--background-color);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Unique Styles */
+
+.flat-background {
+  background-color: black;
+}
+
+.cast-logo {
+  width: 263px;
+}
+
+.header-product-shots {
+  width: 237px;
+}
+
+.body-product-shots {
+  width: 349px;
+}
+
+/* Utility Classes */
+
+.text-center {
+  text-align: center;
+}
+
+.m-20 {
+  margin: 20px 20px 20px 20px;
+}
+
+.p-40 {
+  padding: 100px 40px 100px 40px;
+}
+
+.p-10 {
+  padding: 10px 10px 10px 10px;
+}
+
+.p-30-sides {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.display-block {
+  display: block;
+}
+
+.display-inline {
+  display: inline;
+}
+
+.mw-237 {
+  max-width: 237px;
+}
+
+.p-bottom-50 {
+  padding-bottom: 50px;
+}
+
+.p-top-bottom-20 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* Forms and Fields */
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.form-group input:focus {
+  outline: none;
+}
+
+.hamburger-menu {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  color: var(--background-color);
+}
+
+/* Video Embed */
+
+.embed-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.embed-container iframe,
+.embed-container object,
+.embed-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Media Query for Mobile Devices */
+
+@media (max-width: 768px) {
+  .grid-two-column,
+  .grid-four-column {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .m-20,
+  .p-30-sides,
+  .p-bottom-50,
+  .p-40 {
+    padding: 20px;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+
+  .navigation-links {
+    display: none;
+  }
+
+  .social-media-icons {
+    display: none;
+  }
+
+  nav {
+    justify-content: space-between;
+  }
+
+  .cast-logo {
+    max-width: 120px;
+    height: auto;
+  }
+
+  footer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-two-column,
+  .grid-four-column,
+  .grid-single-column,
+  footer {
+    grid-template-columns: 1fr;
+  }
+
+  .m-20,
+  .p-30-sides,
+  .p-bottom-50,
+  .p-40 {
+    padding: 10px;
+  }
+
+  .cast-logo {
+    max-width: 100px;
+  }
+
+  button {
+    padding: 8px 10px;
+    font-size: 0.9em;
+  }
+
+  .form-group input,
+  .form-group label {
+    font-size: 0.9em;
+  }
+
+  .hamburger-menu {
+    font-size: 1.2em;
+  }
+}

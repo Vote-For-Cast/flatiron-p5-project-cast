@@ -1,92 +1,119 @@
-// In src/pages/SignUp.jsx
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+// In src/pages/SignUp.js
+import React from "react";
+import { useHistory, Link } from "react-router-dom";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 function SignUp() {
-  const [formData, setFormData] = useState({
+  const history = useHistory();
+
+  const initialValues = {
+    name: "",
     email: "",
     password: "",
-    // Add any other fields you require for sign-up
-  });
-  const [error, setError] = useState("");
-  const navigate = useHistory();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    organization: "",
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Implement the logic to send formData to your backend server
-    // Example:
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Required"),
+    email: Yup.string().email("Invalid email address").required("Required"),
+    password: Yup.string().required("Required"),
+    organization: Yup.string().required("Required"),
+  });
+
+  const handleSubmit = async (values, { setSubmitting }) => {
+    // Implement the logic to send values to your backend server
     try {
-      const response = await fetch("YOUR_BACKEND_ENDPOINT/signup", {
+      const response = await fetch("http://127.0.0.1:5555/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(values),
       });
       if (!response.ok) throw new Error("Signup failed");
-      // Handle response data or redirect on success
-      navigate("/login"); // Redirect to login page upon successful signup
-    } catch (err) {
-      setError(err.message);
+      history.push("/login"); // Redirect to login page upon successful signup
+    } catch (error) {
+      console.error("Signup error:", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg">
-        <h3 className="text-2xl font-bold text-center">Sign Up</h3>
-        {error && <p className="text-red-500">{error}</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="mt-4">
-            <div>
-              <label className="block" htmlFor="email">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="Email"
-                name="email"
-                onChange={handleChange}
-                value={formData.email}
-                className="w-full px-4 py-2 mt-2 border rounded-md"
-                required
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block" htmlFor="password">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="Password"
-                name="password"
-                onChange={handleChange}
-                value={formData.password}
-                className="w-full px-4 py-2 mt-2 border rounded-md"
-                required
-              />
-            </div>
-            {/* Add any other input fields here */}
-            <div className="flex items-baseline justify-between">
-              <button
-                type="submit"
-                className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900"
-              >
-                Sign Up
-              </button>
-            </div>
-          </div>
-        </form>
+    <main className="form-container">
+      <div className="text-center">
+        <h1 className="block text-2xl font-bold">Sign up</h1>
+        <p className="mt-2">
+          Already have an account?{" "}
+          <Link to="/login" className="text-primary-color">
+            Sign in here
+          </Link>
+        </p>
       </div>
-    </div>
+
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form className="grid-single-column">
+            <Field
+              name="name"
+              type="text"
+              placeholder="Name"
+              className="form-group input"
+            />
+            <ErrorMessage
+              name="name"
+              component="div"
+              className="text-red-500 text-xs"
+            />
+
+            <Field
+              name="email"
+              type="email"
+              placeholder="Email"
+              className="form-group input"
+            />
+            <ErrorMessage
+              name="email"
+              component="div"
+              className="text-red-500 text-xs"
+            />
+
+            <Field
+              name="organization"
+              type="text"
+              placeholder="Organization"
+              className="form-group input"
+            />
+            <ErrorMessage
+              name="organization"
+              component="div"
+              className="text-red-500 text-xs"
+            />
+
+            <Field
+              name="password"
+              type="password"
+              placeholder="Password"
+              className="form-group input"
+            />
+            <ErrorMessage
+              name="password"
+              component="div"
+              className="text-red-500 text-xs"
+            />
+
+            <button type="submit" disabled={isSubmitting} className="button">
+              Get started
+            </button>
+          </Form>
+        )}
+      </Formik>
+    </main>
   );
 }
 
