@@ -21,7 +21,7 @@ class User(db.Model, SerializerMixin):
     last_updated = db.Column(db.DateTime, server_default=db.func.now())
 
     # add relationships
-    voter = association_proxy("account", "voter")
+    voter = db.relationship("Voter", back_populates="user")
 
     # add serialization rules
     serialize_rules = ("-voter.user",)
@@ -56,7 +56,6 @@ class Voter(db.Model, SerializerMixin):
     veteran_status = db.Column(db.String)
     birthdate = db.Column(db.Date)
     voter_registration_status = db.Column(db.String)
-    party_id = db.Column(db.Integer, db.ForeignKey("parties.id"))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     last_updated = db.Column(db.DateTime, server_default=db.func.now())
 
@@ -70,24 +69,6 @@ class Voter(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f"<Voter {self.id}, {self.name}>"
-
-
-class Party(db.Model, SerializerMixin):
-    __tablename__ = "parties"
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    overview = db.Column(db.String)
-
-    # add relationships
-    voters = db.relationship("Voter", back_populates="party")
-    # add serialization rules
-    serialize_rules = ("-voters.party",)
-
-    # add validation
-
-    def __repr__(self):
-        return f"<Party {self.name}>"
 
 
 # Political Jurisdictions

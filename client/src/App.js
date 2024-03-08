@@ -1,6 +1,6 @@
 // In src/App.js
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import SignUp from "./pages/SignUp.js";
 import Login from "./pages/Login.js";
 import Home from "./pages/Home.js";
@@ -14,13 +14,13 @@ function App() {
     <Router>
       <NavBar />
       <div className="min-h-screen">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/logout" element={<Logout />} />
-        </Routes>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/profile" component={Profile} />
+          <Route path="/signup" component={SignUp} />
+          <Route path="/login" component={Login} />
+          <Route path="/logout" component={Logout} />
+        </Switch>
       </div>
       <Footer />
     </Router>

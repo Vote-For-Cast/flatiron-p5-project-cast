@@ -21,7 +21,6 @@ from models import (
     Country,
     Options,
     Deadlines,
-    Party,
 )
 
 # Views go here!

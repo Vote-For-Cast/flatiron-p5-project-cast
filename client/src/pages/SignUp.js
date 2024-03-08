@@ -1,6 +1,6 @@
 // In src/pages/SignUp.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -9,7 +9,7 @@ function SignUp() {
     // Add any other fields you require for sign-up
   });
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const navigate = useHistory();
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -1,6 +1,6 @@
 // In src/pages/Login.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 function Login() {
   const [credentials, setCredentials] = useState({
@@ -8,7 +8,7 @@ function Login() {
     password: "",
   });
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const navigate = useHistory();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
