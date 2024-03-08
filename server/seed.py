@@ -3,18 +3,16 @@
 # Local imports
 from config import db, app
 from models import (
+    User,
     State,
     County,
+    City,
     Voter,
-    Admin,
-    Account,
-    Bill,
-    Candidate,
-    Representative,
     Election,
-    Poll,
-    Proposition,
-    Campaign,
+    Country,
+    Options,
+    Deadlines,
+    Party,
 )
 
 # List of 50 US states and 3 real counties for each
@@ -76,18 +74,16 @@ if __name__ == "__main__":
         print("Starting seed...")
 
         # Clear existing data from all tables
+        User.query.delete()
         State.query.delete()
         County.query.delete()
+        City.query.delete()
         Voter.query.delete()
-        Admin.query.delete()
-        Account.query.delete()
-        Bill.query.delete()
-        Candidate.query.delete()
-        Representative.query.delete()
         Election.query.delete()
-        Poll.query.delete()
-        Proposition.query.delete()
-        Campaign.query.delete()
+        Country.query.delete()
+        Options.query.delete()
+        Deadlines.query.delete()
+        Party.query.delete()
 
         # Seed states and counties
         for state_name, counties in us_states_with_county.items():

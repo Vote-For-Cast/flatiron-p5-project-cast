@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const ViewElectionsPage = () => {
+const Home = () => {
   const [elections, setElections] = useState(null);
 
   useEffect(() => {
@@ -48,4 +48,4 @@ const ViewElectionsPage = () => {
   );
 };
 
-export default ViewElectionsPage;
+export default Home;

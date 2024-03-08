@@ -1,29 +1,26 @@
+// In src/components/NavBar.js
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const NavBar = () => {
-  const linkStyle = {
-    color: "#FFFFFF", // White from your color palette
-    marginRight: "10px", // Adjust as needed
-    textDecoration: "none", // Optional, for removing underline from links
-  };
-
+function NavBar() {
   return (
-    <nav
-      style={{ backgroundColor: "#000000" /* Black from your color palette */ }}
-    >
-      <NavLink to="/" exact activeClassName="active" style={linkStyle}>
-        Home
-      </NavLink>
-      <NavLink to="/elections/view" activeClassName="active" style={linkStyle}>
-        View Elections
-      </NavLink>
-      <NavLink to="/elections/add" activeClassName="active" style={linkStyle}>
-        Add Election
-      </NavLink>
-      {/* Removed NavLink to "/other" */}
+    <nav className="bg-gray-800 text-white p-4">
+      <ul className="flex space-x-4 justify-center">
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/signup">Sign Up</Link>
+        </li>
+        <li>
+          <Link to="/login">Login</Link>
+        </li>
+        <li>
+          <Link to="/profile">Profile</Link>
+        </li>
+      </ul>
     </nav>
   );
-};
+}
 
 export default NavBar;
